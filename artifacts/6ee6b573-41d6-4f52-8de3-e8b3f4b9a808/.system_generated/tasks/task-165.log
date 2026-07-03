@@ -1,0 +1,16 @@
+[Memory] Loaded 0 conversations from disk.
+
+  ╔══════════════════════════════════════════════════╗
+  ║   AntiGravity Sovereign v1.0.0           ║
+  ║   Sovereign AI Platform — 100% Local             ║
+  ╚══════════════════════════════════════════════════╝
+
+  🌐 Interface:  http://localhost:3000
+  📡 API:        http://localhost:3000/api
+  📊 Health:     http://localhost:3000/api/health
+
+  Agents loaded: 4
+  Conversations: 0 in memory
+
+  Ready. Power to the sovereign. ⚡
+
