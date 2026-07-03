@@ -1,0 +1,140 @@
+{
+  "system": {
+    "name": "AntiGravity Sovereign",
+    "version": "1.0.0",
+    "port": 3000,
+    "host": "0.0.0.0",
+    "adminToken": "ag-sovereign-admin-secret-change-me",
+    "sessionSecret": "ag-session-secret-change-me",
+    "allowedOrigins": ["*"]
+  },
+  "agents": [
+    {
+      "id": "assistant",
+      "name": "Assistant",
+      "avatar": "🤖",
+      "color": "#7C3AED",
+      "description": "General-purpose AI assistant. Handles questions, writing, brainstorming, and analysis.",
+      "model": "ollama/llama3",
+      "ollamaBase": "http://localhost:11434",
+      "systemPrompt": "You are a helpful, intelligent, and friendly assistant. You are running fully locally on a sovereign system with no internet dependencies. Be concise, accurate, and thoughtful in your responses.",
+      "temperature": 0.7,
+      "maxTokens": 4096,
+      "enabled": true,
+      "tools": ["web_search_local", "file_read", "code_exec"]
+    },
+    {
+      "id": "coder",
+      "name": "CodeForge",
+      "avatar": "⚡",
+      "color": "#10B981",
+      "description": "Expert software engineer. Writes, reviews, and debugs code across all languages.",
+      "model": "ollama/codellama",
+      "ollamaBase": "http://localhost:11434",
+      "systemPrompt": "You are an expert software engineer with deep knowledge of software architecture, algorithms, and best practices. You write clean, efficient, production-grade code. Always include comments, error handling, and follow idiomatic conventions for the language in use.",
+      "temperature": 0.2,
+      "maxTokens": 8192,
+      "enabled": true,
+      "tools": ["code_exec", "file_read", "file_write"]
+    },
+    {
+      "id": "analyst",
+      "name": "DataMind",
+      "avatar": "📊",
+      "color": "#F59E0B",
+      "description": "Data analyst and research agent. Analyzes information, identifies patterns, and generates insights.",
+      "model": "ollama/llama3",
+      "ollamaBase": "http://localhost:11434",
+      "systemPrompt": "You are a world-class data analyst and researcher. You excel at breaking down complex datasets, identifying patterns, drawing evidence-based conclusions, and presenting findings clearly. Always structure your analysis logically with clear sections.",
+      "temperature": 0.3,
+      "maxTokens": 4096,
+      "enabled": true,
+      "tools": ["file_read", "web_search_local"]
+    },
+    {
+      "id": "orchestrator",
+      "name": "Orchestrator",
+      "avatar": "🌐",
+      "color": "#EC4899",
+      "description": "Multi-agent orchestrator. Breaks down complex tasks and delegates to specialized agents.",
+      "model": "ollama/llama3",
+      "ollamaBase": "http://localhost:11434",
+      "systemPrompt": "You are the master orchestrator of a sovereign AI system. Your role is to understand complex, multi-step tasks and break them into sub-tasks that can be assigned to specialized agents. Always think step-by-step, identify dependencies, and coordinate execution for maximum efficiency. When outputs from sub-agents are returned to you, synthesize them into a cohesive final response.",
+      "temperature": 0.5,
+      "maxTokens": 8192,
+      "enabled": true,
+      "tools": ["agent_invoke", "file_read", "file_write"]
+    }
+  ],
+  "tokenRouting": {
+    "default": "assistant",
+    "routes": {
+      "code": "coder",
+      "data": "analyst",
+      "orchestrate": "orchestrator",
+      "analyze": "analyst",
+      "write": "assistant",
+      "debug": "coder",
+      "research": "analyst"
+    },
+    "maxContextTokens": 16384,
+    "tokenBudget": {
+      "input": 8192,
+      "output": 8192
+    }
+  },
+  "tools": {
+    "web_search_local": {
+      "enabled": false,
+      "description": "Local web search via SearXNG or similar self-hosted instance",
+      "endpoint": "http://localhost:8080/search"
+    },
+    "file_read": {
+      "enabled": true,
+      "description": "Read files from the local filesystem (restricted to allowed paths)",
+      "allowedPaths": ["./workspace", "./uploads"]
+    },
+    "file_write": {
+      "enabled": true,
+      "description": "Write files to the local filesystem (restricted to allowed paths)",
+      "allowedPaths": ["./workspace", "./outputs"]
+    },
+    "code_exec": {
+      "enabled": false,
+      "description": "Execute code in a sandboxed environment",
+      "runtime": "node",
+      "timeout": 10000
+    },
+    "agent_invoke": {
+      "enabled": true,
+      "description": "Invoke another agent from within the orchestrator"
+    }
+  },
+  "memory": {
+    "type": "file",
+    "path": "./data/memory",
+    "persistConversations": true,
+    "maxHistoryLength": 100,
+    "summarizeAfter": 50
+  },
+  "ui": {
+    "theme": "dark",
+    "accentColor": "#7C3AED",
+    "font": "Inter",
+    "displayName": "AntiGravity Sovereign",
+    "tagline": "Your AI. Your Rules. Your System.",
+    "showAgentSelector": true,
+    "showTokenCounter": true,
+    "showThinkingIndicator": true,
+    "enableMarkdown": true,
+    "enableCodeHighlight": true,
+    "enableVoiceInput": false
+  },
+  "protocols": {
+    "messageFormat": "openai-compatible",
+    "streamingEnabled": true,
+    "retryAttempts": 3,
+    "retryDelayMs": 1000,
+    "timeoutMs": 120000
+  }
+}

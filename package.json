@@ -1,0 +1,21 @@
+{
+  "name": "antigravity-sovereign",
+  "version": "1.0.0",
+  "description": "Sovereign, air-gapped AI Chat Platform — Anti-Gravity Clone",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2",
+    "node-fetch": "^2.7.0",
+    "uuid": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}

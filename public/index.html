@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AntiGravity Sovereign — Your AI. Your Rules. Your System. A fully local, air-gapped, sovereign AI chat platform with multi-agent orchestration." />
+  <meta name="theme-color" content="#08090c" />
+  <title>AntiGravity Sovereign</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Preconnect for fonts (remove if fully air-gapped) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Markdown parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js" defer></script>
+  <!-- Syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ─── Header ─── -->
+  <header id="header" role="banner">
+    <button id="sidebar-toggle" class="input-action-btn" aria-label="Toggle sidebar" title="Toggle sidebar">
+      ☰
+    </button>
+    <a class="header-brand" href="/" aria-label="AntiGravity Sovereign home">
+      <div class="brand-logo" aria-hidden="true">⚡</div>
+      <span class="brand-name">AntiGravity Sovereign</span>
+    </a>
+    <div class="header-spacer"></div>
+    <div class="header-actions">
+      <div class="status-badge" id="status-badge" title="System status">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">ONLINE</span>
+      </div>
+      <button class="input-action-btn" id="settings-toggle" aria-label="Open settings" title="Settings">
+        ⚙
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── Sidebar ─── -->
+  <nav id="sidebar" aria-label="Conversations">
+
+    <div class="sidebar-header">
+      <span class="sidebar-section-label">Conversations</span>
+    </div>
+
+    <button class="new-chat-btn" id="new-chat-btn" aria-label="Start new conversation">
+      <span class="new-chat-icon" aria-hidden="true">+</span>
+      New Chat
+    </button>
+
+    <div class="conv-list" id="conv-list" role="list" aria-label="Conversation history">
+      <!-- Conversations inserted dynamically -->
+    </div>
+
+    <!-- Agent quick-select in sidebar -->
+    <div class="sidebar-agents">
+      <div class="sidebar-section-label" style="padding: 0 var(--space-3) var(--space-2)">Agents</div>
+      <div id="sidebar-agents-list">
+        <!-- Agent chips inserted dynamically -->
+      </div>
+    </div>
+
+  </nav>
+
+  <!-- ─── Main Content ─── -->
+  <main id="main" role="main">
+
+    <!-- Agent selector bar -->
+    <div id="agent-bar" role="toolbar" aria-label="Select agent">
+      <span class="agent-bar-label">Agent</span>
+      <div id="agent-cards" style="display: flex; gap: var(--space-2); align-items: center;">
+        <!-- Agent cards inserted dynamically -->
+      </div>
+    </div>
+
+    <!-- Chat window -->
+    <div id="chat-window" role="log" aria-live="polite" aria-label="Chat messages">
+
+      <!-- Empty state shown when no messages -->
+      <div id="empty-state" class="empty-state">
+        <div class="empty-logo" aria-hidden="true">⚡</div>
+        <h1 class="empty-title">AntiGravity Sovereign</h1>
+        <p class="empty-subtitle">
+          Your fully local, air-gapped AI platform. Zero third parties.
+          Multi-agent orchestration. Full sovereignty.
+        </p>
+        <div class="suggestion-grid" id="suggestion-grid">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+
+      <!-- Messages injected here -->
+      <div id="messages-container"></div>
+
+    </div>
+
+    <!-- Input area -->
+    <section id="input-area" aria-label="Message input">
+      <div class="input-container">
+        <div class="input-wrapper">
+          <textarea
+            id="message-input"
+            role="textbox"
+            aria-multiline="true"
+            aria-label="Type your message"
+            placeholder="Message AntiGravity..."
+            rows="1"
+            autocomplete="off"
+            spellcheck="true"
+          ></textarea>
+          <div class="input-actions">
+            <button class="input-action-btn" id="clear-btn" title="Clear conversation" aria-label="Clear conversation">
+              🗑
+            </button>
+            <button id="send-btn" aria-label="Send message" title="Send (Enter)" disabled>
+              ➤
+            </button>
+          </div>
+        </div>
+        <div class="input-footer">
+          <span class="input-hint">Enter to send &nbsp;·&nbsp; Shift+Enter for new line</span>
+          <span class="token-counter" id="token-counter" aria-label="Token estimate">0 tokens</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ─── Settings Panel ─── -->
+<div id="settings-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-dialog-title">
+  <div id="settings-panel">
+    <div class="settings-header">
+      <h2 class="settings-title" id="settings-dialog-title">⚙ Settings</h2>
+      <button class="settings-close" id="settings-close" aria-label="Close settings">✕</button>
+    </div>
+
+    <div class="settings-tabs" role="tablist">
+      <button class="settings-tab active" role="tab" data-tab="general" aria-selected="true">General</button>
+      <button class="settings-tab" role="tab" data-tab="agents" aria-selected="false">Agents</button>
+      <button class="settings-tab" role="tab" data-tab="tools" aria-selected="false">Tools</button>
+      <button class="settings-tab" role="tab" data-tab="system" aria-selected="false">System</button>
+    </div>
+
+    <div class="settings-body">
+
+      <!-- General -->
+      <div class="settings-section active" data-section="general">
+        <p class="section-heading">Interface</p>
+
+        <div class="toggle-wrapper">
+          <span class="toggle-label">Dark Mode</span>
+          <label class="toggle" aria-label="Toggle dark mode">
+            <input type="checkbox" id="toggle-dark" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-thumb"></span>
+          </label>
+        </div>
+
+        <div class="toggle-wrapper">
+          <span class="toggle-label">Stream Responses</span>
+          <label class="toggle" aria-label="Toggle streaming">
+            <input type="checkbox" id="toggle-stream" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-thumb"></span>
+          </label>
+        </div>
+
+        <div class="toggle-wrapper">
+          <span class="toggle-label">Markdown Rendering</span>
+          <label class="toggle" aria-label="Toggle markdown">
+            <input type="checkbox" id="toggle-markdown" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-thumb"></span>
+          </label>
+        </div>
+
+        <div class="toggle-wrapper">
+          <span class="toggle-label">Token Counter</span>
+          <label class="toggle" aria-label="Toggle token counter">
+            <input type="checkbox" id="toggle-tokens" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-thumb"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Agents -->
+      <div class="settings-section" data-section="agents">
+        <p class="section-heading">Configured Agents</p>
+        <div class="agent-settings-list" id="agent-settings-list">
+          <!-- Populated dynamically -->
+        </div>
+        <div style="margin-top: var(--space-4);">
+          <p class="form-hint">
+            To add or fully customize agents, edit <code>config/settings.json</code> and restart the server.
+            System prompt and model adjustments can be saved below.
+          </p>
+        </div>
+      </div>
+
+      <!-- Tools -->
+      <div class="settings-section" data-section="tools">
+        <p class="section-heading">Available Tools</p>
+        <div id="tools-list">
+          <!-- Populated dynamically -->
+        </div>
+        <p class="form-hint" style="margin-top: var(--space-3);">
+          Tool endpoints and paths are configured in <code>config/settings.json</code>.
+        </p>
+      </div>
+
+      <!-- System -->
+      <div class="settings-section" data-section="system">
+        <p class="section-heading">System Info</p>
+        <div id="system-info">
+          <!-- Populated dynamically -->
+        </div>
+        <p class="section-heading" style="margin-top: var(--space-4);">Admin</p>
+        <div class="form-group">
+          <label class="form-label" for="admin-token-input">Admin Token</label>
+          <input
+            type="password"
+            id="admin-token-input"
+            class="form-input"
+            placeholder="Enter admin token to unlock write operations"
+            autocomplete="off"
+          />
+          <p class="form-hint">Required for saving settings and modifying agents via the API.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ollama-url-input">Ollama Base URL</label>
+          <input
+            type="text"
+            id="ollama-url-input"
+            class="form-input"
+            placeholder="http://localhost:11434"
+          />
+          <p class="form-hint">Set to override the default Ollama endpoint for all agents.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="settings-footer">
+      <button class="btn btn-secondary" id="settings-cancel">Cancel</button>
+      <button class="btn btn-primary" id="settings-save">Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Toast Container ─── -->
+<div id="toast-container" aria-live="assertive" aria-atomic="false"></div>
+
+<!-- ─── Main Application Script ─── -->
+<script type="module" src="main.js"></script>
+
+</body>
+</html>
