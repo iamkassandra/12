@@ -3,8 +3,7 @@
    Premium dark-mode interface with glassmorphism & micro-animations
    ============================================================ */
 
-/* ─── Google Fonts ─────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* ─── Sovereign Fallback Fonts (No external requests) ──────── */
 
 /* ─── CSS Custom Properties (Tokens) ──────────────────────── */
 :root {
